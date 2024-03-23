@@ -1,3 +1,4 @@
+//go:build !forceposix
 // +build !forceposix
 
 package flags
@@ -6,12 +7,21 @@ import (
 	"strings"
 )
 
+/*
 // Windows uses a front slash for both short and long options.  Also it uses
 // a colon for name/argument delimter.
 const (
+
 	defaultShortOptDelimiter = '/'
 	defaultLongOptDelimiter  = "/"
 	defaultNameArgDelimiter  = ':'
+
+)
+*/
+const (
+	defaultShortOptDelimiter = '-'
+	defaultLongOptDelimiter  = "--"
+	defaultNameArgDelimiter  = '='
 )
 
 func argumentStartsOption(arg string) bool {
@@ -19,11 +29,12 @@ func argumentStartsOption(arg string) bool {
 }
 
 func argumentIsOption(arg string) bool {
-	// Windows-style options allow front slash for the option
+	/*// Windows-style options allow front slash for the option
 	// delimiter.
 	if len(arg) > 1 && arg[0] == '/' {
 		return true
 	}
+	*/
 
 	if len(arg) > 1 && arg[0] == '-' && arg[1] != '-' {
 		return true
@@ -39,10 +50,12 @@ func argumentIsOption(arg string) bool {
 // stripOptionPrefix returns the option without the prefix and whether or
 // not the option is a long option or not.
 func stripOptionPrefix(optname string) (prefix string, name string, islong bool) {
-	// Determine if the argument is a long option or not.  Windows
+	// Determine if the argument is a long option or not.
+	/*Windows
 	// typically supports both long and short options with a single
 	// front slash as the option delimiter, so handle this situation
 	// nicely.
+	*/
 	possplit := 0
 
 	if strings.HasPrefix(optname, "--") {
@@ -51,10 +64,10 @@ func stripOptionPrefix(optname string) (prefix string, name string, islong bool)
 	} else if strings.HasPrefix(optname, "-") {
 		possplit = 1
 		islong = false
-	} else if strings.HasPrefix(optname, "/") {
+	} /* else if strings.HasPrefix(optname, "/") {
 		possplit = 1
 		islong = len(optname) > 2
-	}
+	}*/
 
 	return optname[:possplit], optname[possplit:], islong
 }
